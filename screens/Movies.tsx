@@ -25,11 +25,41 @@ const Loader = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
 `;
 
 const BgImg = styled.Image``;
 
-const Title = styled.Text``;
+const Poster = styled.Image`
+  width: 100px;
+  height: 160px;
+`;
+
+const Title = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+`;
+
+const Wrapper = styled.View`
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+const Column = styled.View`
+  width: 40%;
+  margin-left: 15px;
+`;
+
+const Overview = styled.Text`
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 10px;
+`;
+
+const Votes = styled(Overview)`
+  margin-top: 5px;
+`;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -69,9 +99,17 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             />
             <BlurView
               style={StyleSheet.absoluteFill}
-              tint={isDark ? "dark" : "light"}
+              // tint={isDark ? "dark" : "light"}
+              intensity={100}
             >
-              <Title>{movie.original_title}</Title>
+              <Wrapper>
+                <Poster source={{ uri: makeImgPath(movie.poster_path) }} />
+                <Column>
+                  <Title>{movie.original_title}</Title>
+                  <Overview>{movie.overview.slice(0, 90)}...</Overview>
+                  <Votes>⭐{movie.vote_average}</Votes>
+                </Column>
+              </Wrapper>
             </BlurView>
           </View>
         ))}
