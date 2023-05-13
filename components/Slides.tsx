@@ -3,14 +3,10 @@ import { View, StyleSheet, useColorScheme } from "react-native";
 import styled from "styled-components/native";
 import { makeImgPath } from "../utilis";
 import { BlurView } from "expo-blur";
+import Poster from "./Poster";
 // import { BlurView } from "@react-native-community/blur";
 
 const BgImg = styled.Image``;
-
-const Poster = styled.Image`
-  width: 100px;
-  height: 160px;
-`;
 
 const Title = styled.Text<{ isDark: boolean }>`
   font-size: 16px;
@@ -24,6 +20,7 @@ const Wrapper = styled.View`
   justify-content: center;
   align-items: center;
 `;
+
 const Column = styled.View`
   width: 40%;
   margin-left: 15px;
@@ -32,7 +29,7 @@ const Column = styled.View`
 const Overview = styled.Text<{ isDark: boolean }>`
   /* color: rgba(255, 255, 255, 0.6); */
   color: ${(props) =>
-    props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
+    !props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
   margin-top: 10px;
   font-weight: 600;
 `;
@@ -70,7 +67,7 @@ const Slide: React.FC<SlideProps> = ({
         intensity={100}
       >
         <Wrapper>
-          <Poster source={{ uri: makeImgPath(posterPath) }} />
+          <Poster path={posterPath} />
           <Column>
             <Title>{originalTitle}</Title>
             <Overview>{overview.slice(0, 90)}...</Overview>
