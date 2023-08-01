@@ -16,14 +16,9 @@ import Slide from "../components/Slides";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 import { useQuery, useQueryClient } from "react-query";
-import { moviesApi } from "../api";
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-`;
+import { MovieResponse, moviesApi } from "../api";
+import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -55,25 +50,28 @@ const HSeparator = styled.View`
 `;
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const {
     isLoading: nowPlayingLoading,
     data: nowPlayingData,
     isRefetching: isRefetchingNowPlaying,
-  } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
     isRefetching: isRefetchingUpcoming,
-  } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
+  } = useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
   const {
     isLoading: trendingLoading,
     data: trendingData,
     isRefetching: isRefetchingTrending,
-  } = useQuery(["movies", "trending"], moviesApi.trending);
+  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
   const onRefresh = async () => {
-    queryClient.refetchQueries(["movies"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const renderVMedia = ({ item }) => (
@@ -93,18 +91,15 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     />
   );
 
-  const movieKeyExtractor = (item) => item.id;
+  const movieKeyExtractor = (item: Movie) => item.id;
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
 
-  const refreshing =
-    isRefetchingNowPlaying || isRefetchingTrending || isRefetchingUpcoming;
+  // const refreshing = isRefetchingNowPlaying || isRefetchingTrending || isRefetchingUpcoming;
 
   return loading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
-  ) : (
+    <Loader />
+  ) : upcomingData ? (
     <FlatList
       onRefresh={onRefresh}
       refreshing={refreshing}
@@ -120,38 +115,29 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             }}
             timeout={2}
           >
-            {nowPlayingData.results.map((movie) => (
+            {nowPlayingData?.results.map((movie) => (
               <Slide
                 key={movie.id}
-                backdropPath={movie.backdrop_path}
-                posterPath={movie.poster_path}
+                backdropPath={movie.backdrop_path || ""}
+                posterPath={movie.poster_path || ""}
                 originalTitle={movie.original_title}
                 overview={movie.overview}
                 voteAverage={movie.vote_average}
               />
             ))}
           </Swiper>
-          <ListContainer>
-            <ListTitle>Trending Movies</ListTitle>
-            <TrendingScroll
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={movieKeyExtractor}
-              contentContainerStyle={{ paddingHorizontal: 20 }}
-              data={trendingData.results}
-              ItemSeparatorComponent={<HSeparator />}
-              renderItem={renderVMedia}
-            />
-          </ListContainer>
+          {trendingData ? (
+            <HList title="Trending Movies" data={trendingData.results} />
+          ) : null}
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
       }
       data={upcomingData.results}
       ItemSeparatorComponent={<VSeparator />}
+      contentContainerStyle={{ paddingVertical: 30 }}
       keyExtractor={movieKeyExtractor}
       renderItem={renderHMedia}
     />
-  );
+  ) : null;
 };
-
 export default Movies;
