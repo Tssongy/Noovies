@@ -62,6 +62,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search-outline" size={size} color={color} />
           ),
+          tabBarHideOnKeyboard: true,
         }}
       />
     </Tab.Navigator>

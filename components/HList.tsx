@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { FlatList, View } from "react-native";
 import VMedia from "./VMedia";
 
