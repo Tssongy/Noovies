@@ -88,6 +88,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       originalTitle={item.original_title}
       overview={item.overview}
       releaseDate={item.release_date}
+      fullData={item}
     />
   );
 
@@ -123,6 +124,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                 originalTitle={movie.original_title}
                 overview={movie.overview}
                 voteAverage={movie.vote_average}
+                fullData={movie}
               />
             ))}
           </Swiper>
