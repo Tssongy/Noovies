@@ -1,3 +1,5 @@
+import { QueryFunction } from "react-query";
+
 const API_KEY = "93fdc83520ff05f10a543a6c2d6a3bbc";
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -45,7 +47,15 @@ export interface MovieResponse extends BaseResponse {
   results: Movie[];
 }
 
-export const moviesApi = {
+export interface TVResponse extends BaseResponse {
+  results: TV[];
+}
+
+interface Fetchers<T> {
+  [key: string]: QueryFunction<T>;
+}
+
+export const moviesApi: Fetchers<MovieResponse> = {
   trending: () =>
     fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&region=AU`).then(
       (res) => res.json()
@@ -72,7 +82,7 @@ export const moviesApi = {
   },
 };
 
-export const tvApi = {
+export const tvApi: Fetchers<TVResponse> = {
   trending: () =>
     fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&region=AU`).then(
       (res) => res.json()
